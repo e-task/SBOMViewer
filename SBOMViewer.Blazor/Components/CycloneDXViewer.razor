@@ -1,0 +1,176 @@
+﻿@using SBOMViewer.Blazor.Models.CycloneDX
+@using System.Text.Json
+
+@if (Document != null)
+{
+    <Card Style="background-color:#3e556b">
+        <CardHeader Style="color:white"><strong>File Name : </strong>@DocumentFileName</CardHeader>
+        <CardBody>
+
+            <!--General Information-->
+            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseGeneralInfo)">
+                <span>General Information</span>
+                <i class="chevron-icon" style="@ChevronStyle"></i>
+            </h4>
+
+            <Collapse @ref="collapseGeneralInfo" Horizontal="false">
+                <div class="info-container">
+                    <div><span><strong>Format:</strong> @Document.BomFormat</span></div>
+                    <div><span><strong>Spec Version:</strong> @Document.SpecVersion</span></div>
+                    <div><span><strong>Serial Number:</strong> @Document.SerialNumber</span></div>
+                    <div><span><strong>Version:</strong> @Document.Version</span></div>
+                </div>
+            </Collapse>
+
+            <!--Metadata-->
+            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseMetadata)">
+                <span>Metadata</span>
+                <i class="chevron-icon" style="@ChevronStyle"></i>
+            </h4>
+
+            <Collapse @ref="collapseMetadata" Horizontal="false">
+                <div class="info-container">
+                    <div><spanp><strong>Timestamp:</strong> @Document.Metadata.Timestamp</spanp></div>
+                    <div><span><strong>Tools:</strong></span></div>
+                    <ul>
+                        @foreach (var tool in Document.Metadata.Tools)
+                        {
+                            <li>@tool.Name (@tool.Vendor) - @tool.Version</li>
+                        }
+                    </ul>
+                </div>
+            </Collapse>
+
+            <!--Components-->
+            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseComponents)">
+                <span>Components | #@Document.Components.Count()</span>
+                <i class="chevron-icon" style="@ChevronStyle"></i>
+            </h4>
+
+            <Collapse @ref="collapseComponents" Horizontal="false">
+                <div class="info-container">
+                    <div class="scroll-container">
+                        @foreach (var component in Document.Components)
+                        {
+                            <details>
+                                <summary>@component.Name ( @component.Version  | @component.Scope ) </summary>
+                                <div><span><strong>Description: </strong> @component.Description</span></div>
+                                <div><span><strong>Type: </strong> @component.Type</span></div>
+                                <div><span><strong>Bom-ref :</strong> @component.BomRef</span></div>
+                                <div><span><strong>Copyright:</strong> @component.Copyright</span></div>
+                                <div><span><strong>Purl:</strong> @component.Purl</span></div>
+                                <div><span><strong>Authors</strong></span></div>
+                                <ul>
+                                    @if (component.Authors != null)
+                                    {
+                                        @foreach (var author in component.Authors)
+                                        {
+                                            <li>@author.Name</li>
+                                        }
+                                    }
+                                </ul>
+                                <div><span><strong>Hashes</strong></span></div>
+                                <ul>
+                                    @if (component.Hashes != null)
+                                    {
+                                        @foreach (var hash in component.Hashes)
+                                        {
+                                            <li>@hash.Algorithm : (@hash.Content)</li>
+                                        }
+                                    }
+                                </ul>
+                                <div><span><strong>Licenses</strong></span></div>
+                                <ul>
+                                    @if (component.Licenses != null)
+                                    {
+                                        @foreach (var license in component.Licenses)
+                                        {
+                                            <li>@license.License.Name (@license.License.Id | @license.License.Url)</li>
+                                        }
+                                    }
+                                </ul>
+                                <div><span><strong>ExternalReferences</strong></span></div>
+                                <ul>
+                                    @if (component.ExternalReferences != null)
+                                    {
+                                        @foreach (var extRef in component.ExternalReferences)
+                                        {
+                                            <li>@extRef.Type : @extRef.Url</li>
+                                        }
+                                    }
+                                </ul>
+                            </details>
+                        }
+                    </div>
+                </div>
+            </Collapse>
+
+            <!--Dependencies-->
+            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseDependencies)">
+                <span>Dependencies | #@Document.Dependencies?.Count()</span>
+                <i class="chevron-icon" style="@ChevronStyle"></i>
+            </h4>
+
+            <Collapse @ref="collapseDependencies" Horizontal="false">
+                <div class="info-container">
+                    <div class="scroll-container">
+                        @if (Document.Dependencies != null)
+                        {
+                            @foreach (var dependency in Document.Dependencies)
+                            {
+                                <details>
+                                    <summary>@dependency.Ref | #@dependency.DependsOn?.Count()</summary>
+                                    <ul>
+                                        @if (dependency.DependsOn?.Count() > 0)
+                                        {
+                                            @foreach (var depends in dependency.DependsOn)
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(depends?.ToString()))
+                                                {
+                                                    <li class="depends-on">@depends?.ToString()</li>
+                                                }
+                                            }
+                                        }
+                                    </ul>
+                                </details>
+                            }
+                        }
+                    </div>
+                </div>
+            </Collapse>
+        </CardBody>
+    </Card>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+
+    private Collapse? collapseGeneralInfo;
+    private Collapse? collapseMetadata;
+    private Collapse? collapseComponents;
+    private Collapse? collapseDependencies;
+    private Collapse? collapseDepends;
+    private Collapse? collapseMain;
+
+    private bool isExpanded;
+
+    [Parameter]
+    public CycloneDXDocument? Document { get; set; }
+
+    [Parameter]
+    public string? DocumentFileName { get; set; }
+
+    private string ChevronStyle => isExpanded ? "transform: rotate(180deg);" : "transform: rotate(0deg);";
+
+    private async Task ToggleAsync(Collapse? collapse)
+    {
+        if (collapse is not null)
+        {
+            await collapse.ToggleAsync();
+        }
+    }
+}
+

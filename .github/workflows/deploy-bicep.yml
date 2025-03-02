@@ -1,0 +1,25 @@
+name: Deploy Azure Static Web App Infrastructure
+
+on:
+  push:
+    paths:
+      - 'bicep/main.bicep'  # Only trigger on Bicep file changes
+  workflow_dispatch:  # Allow manual deployment if needed
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group MyResourceGroup \
+            --template-file infrastructure/main.bicep
