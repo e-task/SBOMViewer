@@ -1,5 +1,9 @@
 ﻿
 # SPDX and SBOM-Tool JSON Viewer
+[SBOM Viewer](https://sbomviewer.com)  
+![SBOM Viewer](./sbomviewer.jpeg)
+
+
 
 This web application provides an interactive and user-friendly interface for viewing and exploring parsed SPDX and SBOM-tool JSON files. Built with Blazor WebAssembly, the app loads and displays the data in a structured, readable format, making it easy for users to analyze software components, licenses, and dependencies directly in their browser.
 

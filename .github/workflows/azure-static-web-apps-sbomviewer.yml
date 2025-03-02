@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main  # Change if your main branch is different
+    paths:
+      - '**/*'  # Include all files by default
+      - '!README.md'  # Exclude README.md specifically
+      - '!**/*.txt'  # Exclude all .txt files 
   workflow_dispatch:  # Allow manual deployment if needed
 
 jobs:
