@@ -1,5 +1,5 @@
 param location string = 'EastUS2'
-param appName string = 'app-SBOMViewer'
+param appName string = 'app-SBOMViewer-eastus-001'
 param repositoryUrl string = 'https://github.com/NavneetHegde/SBOMViewer'
 param branch string = 'main'
 param skuTier string = 'Free'
