@@ -10,6 +10,7 @@
     private Collapse? collapsePackages;
     private Collapse? collapseRelationships;
     private Collapse? collapseMain;
+    private Collapse? collapsePackagesByLicense;
 
     [Parameter]
     public SpdxDocument? Document { get; set; }
@@ -127,6 +128,70 @@
                                         {
                                             <li>@extRef.ReferenceType | @extRef.ReferenceCategory (@extRef.ReferenceLocator)</li>
                                         }
+                                    }
+                                </ul>
+                            </details>
+                        }
+                    </div>
+                </div>
+            </Collapse>
+
+            <!-- Packages nach LicenseConcluded gruppiert -->
+            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapsePackagesByLicense)">
+                <span>Packages nach LicenseConcluded</span>
+                <i class="chevron-icon" style="@ChevronStyle"></i>
+            </h4>
+            <Collapse @ref="collapsePackagesByLicense" Horizontal="false">
+                <div class="info-container">
+                    <div class="scroll-container">
+                        @foreach (var group in Document.Packages.GroupBy(p => p.LicenseDeclared).OrderBy(g => g.Key))
+                        {
+                            <details>
+                                <summary><strong>@(group.Key?.Length > 80 ? group.Key.Substring(0, 80) + "..." : group.Key)</strong> (@group.Count())</summary>
+                                <ul>
+                                    @foreach (var package in group.OrderBy(p => p.Name))
+                                    {
+                                        <li>
+                                            <strong>@package.Name</strong> - Version: @package.VersionInfo<br />
+                                            SPDXID: @package.SpdxId<br />
+                                            LicenseDeclared: @package.LicenseDeclared<br />
+                                            LicenseConcluded: @package.LicenseConcluded<br />
+                                            Copyright: @package.CopyrightText<br />
+                                            Supplier: @package.Supplier<br />
+                                            Download: @package.DownloadLocation<br />
+                                        </li>
+                                    }
+                                </ul>
+                            </details>
+                        }
+                    </div>
+                </div>
+            </Collapse>
+
+            <!-- Packages nach Supplier gruppiert -->
+            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseMain)">
+                <span>Packages nach Supplier</span>
+                <i class="chevron-icon" style="@ChevronStyle"></i>
+            </h4>
+            <Collapse @ref="collapseMain" Horizontal="false">
+                <div class="info-container">
+                    <div class="scroll-container">
+                        @foreach (var group in Document.Packages.GroupBy(p => p.Supplier ?? "Unbekannt").OrderBy(g => g.Key))
+                        {
+                            <details>
+                                <summary><strong>@group.Key</strong> (@group.Count())</summary>
+                                <ul>
+                                    @foreach (var package in group.OrderBy(p => p.Name))
+                                    {
+                                        <li>
+                                            <strong>@package.Name</strong> - Version: @package.VersionInfo<br />
+                                            SPDXID: @package.SpdxId<br />
+                                            LicenseDeclared: @package.LicenseDeclared<br />
+                                            LicenseConcluded: @package.LicenseConcluded<br />
+                                            Copyright: @package.CopyrightText<br />
+                                            Supplier: @package.Supplier<br />
+                                            Download: @package.DownloadLocation<br />
+                                        </li>
                                     }
                                 </ul>
                             </details>

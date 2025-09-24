@@ -43,7 +43,7 @@
     [Inject]
     protected PreloadService? PreloadService { get; set; }
 
-    private SbomFormat selectedSbomFormat = SbomFormat.CycloneDX_1_6;
+    private SbomFormat selectedSbomFormat = SbomFormat.SPDX_2_2;
 
     string? fileContent;
     CycloneDXDocument? cycloneDXData;
@@ -96,8 +96,9 @@
 
     private enum SbomFormat
     {
-        CycloneDX_1_6,
-        SPDX_2_2
+        SPDX_2_2,
+        CycloneDX_1_6
+
     }
 
 }
