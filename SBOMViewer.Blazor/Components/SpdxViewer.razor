@@ -117,7 +117,43 @@
                                 <div><span><strong>Version:</strong> @package.VersionInfo</span></div>
                                 <div><span><strong>FilesAnalyzed:</strong> @package.FilesAnalyzed</span></div>
                                 <div><span><strong>LicenseConcluded:</strong> @package.LicenseConcluded</span></div>
-                                <div><span><strong>LicenseDeclared:</strong> @package.LicenseDeclared</span></div>
+                                <div>
+                                    <span>
+                                        <strong>LicenseDeclared:</strong>
+                                        @{
+                                            var license = package.LicenseDeclared;
+                                            string? url = null;
+                                            if (!string.IsNullOrWhiteSpace(license))
+                                            {
+                                                if (license.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    url = license;
+                                                }
+                                                else if (license == "NOASSERTION")
+                                                {
+                                                    url = null; // Kein Link für unbekannte Lizenz
+
+                                                }
+                                                else if (license.Contains("LicenseRef-") && license.Contains("Commercial"))
+                                                {
+                                                    url = null; // Kein Link für kommerzielle Lizenz
+                                                }
+                                                else
+                                                {
+                                                    url = $"https://spdx.org/licenses/{license}.html";
+                                                }
+                                            }
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(url))
+                                        {
+                                            <a href="@url" target="_blank" rel="noopener noreferrer"> @license</a>
+                                        }
+                                        else
+                                        {
+                                            @license
+                                        }
+                                    </span>
+                                </div>
                                 <div><span><strong>CopyrightText:</strong> @package.CopyrightText</span></div>
                                 <div><span><strong>Supplier:</strong> @package.Supplier</span></div>
                                 <div><span><strong>Download Location:</strong> @package.DownloadLocation</span></div>
