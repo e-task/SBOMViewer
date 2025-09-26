@@ -71,34 +71,36 @@
             </Collapse>
 
             <!-- Files -->
-            <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseFiles)">
-                <span>Files | #@Document.Files.Count()</span>
-                <i class="chevron-icon" style="@ChevronStyle"></i>
-            </h4>
+            @if (Document.Files != null && Document.Files.Count > 0)
+            {
+                <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapseFiles)">
+                    <span>Files | #@Document.Files.Count()</span>
+                    <i class="chevron-icon" style="@ChevronStyle"></i>
+                </h4>
 
-            <Collapse @ref="collapseFiles" Horizontal="false">
-                <div class="info-container">
-                    <div class="scroll-container">
-                        @foreach (var file in Document.Files.OrderBy(f => f.FileName))
-                        {
-                            <details>
-                                <summary>@file.FileName</summary>
-                                <div><span><strong>Spx Id: </strong> @file.SpdxId</span></div>
-                                <div><span><strong>License Concluded:</strong> @file.LicenseConcluded</span></div>
-                                <div><span><strong>Copyright:</strong> @file.CopyrightText</span></div>
-                                <div><span><strong>Checksums</strong></span></div>
-                                <ul>
-                                    @foreach (var checksum in file.Checksums)
-                                    {
-                                        <li>@checksum.Algorithm: @checksum.ChecksumValue</li>
-                                    }
-                                </ul>
-                            </details>
-                        }
+                <Collapse @ref="collapseFiles" Horizontal="false">
+                    <div class="info-container">
+                        <div class="scroll-container">
+                            @foreach (var file in Document.Files.OrderBy(f => f.FileName))
+                            {
+                                <details>
+                                    <summary>@file.FileName</summary>
+                                    <div><span><strong>Spx Id: </strong> @file.SpdxId</span></div>
+                                    <div><span><strong>License Concluded:</strong> @file.LicenseConcluded</span></div>
+                                    <div><span><strong>Copyright:</strong> @file.CopyrightText</span></div>
+                                    <div><span><strong>Checksums</strong></span></div>
+                                    <ul>
+                                        @foreach (var checksum in file.Checksums)
+                                        {
+                                            <li>@checksum.Algorithm: @checksum.ChecksumValue</li>
+                                        }
+                                    </ul>
+                                </details>
+                            }
+                        </div>
                     </div>
-                </div>
-            </Collapse>
-
+                </Collapse>
+            }
 
             <!-- Packages -->
             <h4 class="collapsible-header" @onclick="() => ToggleAsync(collapsePackages)">
@@ -114,6 +116,10 @@
                             <details>
                                 <summary>@package.Name</summary>
                                 <div><span><strong>SpdxId:</strong> @package.SpdxId</span></div>
+                                @if (!string.IsNullOrWhiteSpace(package.Description))
+                                {
+                                    <div><span><strong>Description:</strong> @package.Description</span></div>
+                                }
                                 <div><span><strong>Version:</strong> @package.VersionInfo</span></div>
                                 <div><span><strong>FilesAnalyzed:</strong> @package.FilesAnalyzed</span></div>
                                 <div><span><strong>LicenseConcluded:</strong> @package.LicenseConcluded</span></div>
@@ -190,6 +196,10 @@
                                         <li>
                                             <strong>@package.Name</strong> - Version: @package.VersionInfo<br />
                                             SPDXID: @package.SpdxId<br />
+                                            @if (!string.IsNullOrWhiteSpace(package.Description))
+                                            {
+                                                <span>Description: @package.Description<br /></span>
+                                            }
                                             LicenseDeclared: @package.LicenseDeclared<br />
                                             LicenseConcluded: @package.LicenseConcluded<br />
                                             Copyright: @package.CopyrightText<br />
@@ -222,6 +232,10 @@
                                         <li>
                                             <strong>@package.Name</strong> - Version: @package.VersionInfo<br />
                                             SPDXID: @package.SpdxId<br />
+                                            @if (!string.IsNullOrWhiteSpace(package.Description))
+                                            {
+                                                <span>Description: @package.Description<br /></span>
+                                            }
                                             LicenseDeclared: @package.LicenseDeclared<br />
                                             LicenseConcluded: @package.LicenseConcluded<br />
                                             Copyright: @package.CopyrightText<br />

@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace SBOMViewer.Blazor.Models.Spdx;
 
@@ -72,6 +72,9 @@ public class SpdxPackage
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = "";
+
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = "";
 
     [JsonPropertyName("SPDXID")]
     public string SpdxId { get; set; } = "";
